@@ -1,0 +1,25 @@
+`timescale 1ns/1ps
+module booth_multiplier_tb;
+    parameter WIDTH = 16;
+    reg  signed [WIDTH-1:0] a, b;
+    wire signed [2*WIDTH-1:0] product;
+    
+    booth_multiplier #(.WIDTH(WIDTH)) dut (
+        .mul_a(a), .mul_b(b), .product(product)
+    );
+
+    initial begin
+        // 建议使用 FSDB 供 Verdi 查看，契合你的工程习惯
+        $fsdbDumpfile("booth_mul.fsdb");
+        $fsdbDumpvars(0, booth_multiplier_tb);
+
+        repeat(50) begin
+            a = $random; b = $random;
+            #10;
+            if (product !== a * b) 
+                $display("FAIL: %d * %d = %d (Exp: %d)", a, b, product, a*b);
+        end
+        $display("Verification Done!");
+        $finish;
+    end
+endmodule
