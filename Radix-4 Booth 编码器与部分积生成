@@ -1,0 +1,21 @@
+module booth_encoder #(parameter WIDTH = 16) (
+    input  [2:0]   y_window,  // {y[2i+1], y[2i], y[2i-1]}
+    input  [WIDTH-1:0] x,
+    output reg [2*WIDTH-1:0] p_prod
+);
+    wire [WIDTH:0] x_ext = {x[WIDTH-1], x};
+    wire [WIDTH:0] neg_x = ~x_ext + 1'b1;
+    wire [WIDTH:0] two_x = {x, 1'b0};
+    wire [WIDTH:0] neg_two_x = ~two_x + 1'b1;
+
+    always @(*) begin
+        case (y_window)
+            3'b000, 3'b111: p_prod = 0;
+            3'b001, 3'b010: p_prod = $signed(x_ext);
+            3'b011:         p_prod = $signed(two_x);
+            3'b100:         p_prod = $signed(neg_two_x);
+            3'b101, 3'b110: p_prod = $signed(neg_x);
+            default:        p_prod = 0;
+        endcase
+    end
+endmodule
