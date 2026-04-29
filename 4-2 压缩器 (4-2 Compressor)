@@ -1,0 +1,9 @@
+module compressor_4_2 (
+    input  wire x1, x2, x3, x4, cin,
+    output wire s, c, cout
+);
+    wire w1 = x1 ^ x2 ^ x3;
+    assign cout = (x1 & x2) | (x2 & x3) | (x1 & x3);
+    assign s = w1 ^ x4 ^ cin;
+    assign c = (w1 & x4) | (w1 & cin) | (x4 & cin);
+endmodule
